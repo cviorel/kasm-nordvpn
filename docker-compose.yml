@@ -1,0 +1,24 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
+      - FIREWALL_OUTBOUND_SUBNETS=172.20.0.0/16
+    volumes:
+      - ./iptables:/iptables:ro
+    networks:
+      vpn:
+        ipv4_address: 172.20.0.2
+    restart: unless-stopped
+
+networks:
+  vpn:
+    external: true
